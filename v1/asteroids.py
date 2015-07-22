@@ -3,10 +3,9 @@ import pyglet
 from pyglet.gl import * 
 
 game_window = pyglet.window.Window(800, 600)
-
 main_batch = pyglet.graphics.Batch()
 
-player_ship = player.Player(x=400, y=300, batch=main_batch)
+player_ship = player.Player(x=400, y=300, batch=main_batch)	
 asteroids = load.asteroids(3, player_ship.position, main_batch)
 
 score_label = pyglet.text.Label(text='Score: ' + str(player_ship.get_score()), x=10, y=575, batch=main_batch)
@@ -38,12 +37,17 @@ def update(dt):
 	for to_remove in [obj for obj in game_objects if obj.dead]:
 		if to_remove.reacts_to_bullets and not to_remove.is_bullet:
 			player_ship.set_score(to_remove.point_value)
-			print to_remove.scale, to_remove.point_value
 			score_label.text = 'Score: ' + str(player_ship.get_score())
+		if not to_remove.reacts_to_bullets and not to_remove.is_bullet:
+			dead_label = pyglet.text.Label(text='GAME OVER!', x=400, y=300, anchor_x='center', batch=main_batch)
 		to_remove.delete()
 		game_objects.remove(to_remove)
 	
 	game_objects.extend(to_add)
+
+	#DOESN'T ACCOUNT FOR BULLETS
+	if len(game_objects) == 1:
+		win_label = pyglet.text.Label(text='YOU WIN!', x=400, y=300, anchor_x='center', batch=main_batch)
 
 @game_window.event
 def on_draw():
